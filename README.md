@@ -37,7 +37,7 @@ PredictAI is an innovative football prediction platform powered by artificial in
 
 ### Backend
 
-- **Framework:** Node.js (Express)
+- **Framework:** C# (.NET Framework)
 - **Database:** PostgreSQL
 - **API:** RESTful
 - **Caching:** Redis
