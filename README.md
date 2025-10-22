@@ -1,62 +1,65 @@
 # PredictAI - Football Match Prediction Platform
-
-```mermaid
 flowchart TD
-    %% === PHASE 1 ===
-    A["
-    **1️⃣ Data Ingestion (Extraction & Caching)**  
-    🧭 *Purpose:* Efficiently fetch and temporarily store raw, time-sensitive data from rate-limited APIs.  
-    ⚙️ *Logic:* Scheduled Node.js service (cron job) calls APIs via Axios to fetch fixtures, results, and odds.  
-    🧰 *Tech:* Node.js, Express.js, Axios, pg (DB Connector).  
-    🗄️ *PostgreSQL:* Staging Tables – store raw, uncleaned API JSON rows, flushed after cleaning.
-    "] --> B
+    %% === DATA INGESTION PHASE ===
+    A1(["🏗️ **Data Ingestion (Extraction & Caching)**"])
+    A2["🧭 *Purpose:* Fetch & temporarily store raw, time-sensitive data from APIs.  
+    ⚙️ *Logic:* Scheduled Node.js cron job fetches data (fixtures, odds) via Axios.  
+    🧰 *Tech:* Node.js, Express.js, Axios, pg (DB Connector)."]
+    A3["🗄️ *PostgreSQL Object:* Staging Tables → store raw, uncleaned JSON rows."]
 
-    %% === PHASE 2 ===
-    B["
-    **2️⃣ Data Storage & Cleaning**  
-    🧭 *Purpose:* Transform raw API data into normalized relational form for analysis.  
-    ⚙️ *Logic:* Node.js script reads staging tables, standardizes data (team mapping), and upserts into normalized tables.  
-    🧰 *Tech:* Node.js, PL/pgSQL (validation & insertion).  
-    🗄️ *PostgreSQL:* Core Tables – Leagues, Teams, Games, Game_Statistics.
-    "] --> C
+    %% === DATA CLEANING PHASE ===
+    B1(["🧹 **Data Storage & Cleaning**"])
+    B2["🧭 *Purpose:* Normalize API data into relational format.  
+    ⚙️ *Logic:* Node.js script standardizes data, performs upserts to normalized tables.  
+    🧰 *Tech:* Node.js, PL/pgSQL. "]
+    B3["🗄️ *PostgreSQL Object:* Core Tables → Leagues, Teams, Games, Game_Statistics."]
 
-    %% === PHASE 3 ===
-    C["
-    **3️⃣ Feature Engineering**  
-    🧭 *Purpose:* Generate predictive variables (features) describing team form, strength, and context.  
-    ⚙️ *Logic:* Stored Procedures calculate rolling averages (e.g., ORtg, last 5 points, opponent strength) using joins & time windows.  
-    🧰 *Tech:* PostgreSQL, PL/pgSQL.  
-    🗄️ *PostgreSQL:* Materialized Views – store precomputed, flattened feature vectors.
-    "] --> D
+    %% === FEATURE ENGINEERING ===
+    C1(["🧮 **Feature Engineering**"])
+    C2["🧭 *Purpose:* Generate predictive variables capturing team form & performance.  
+    ⚙️ *Logic:* Stored procedures compute rolling averages, opponent strength, etc.  
+    🧰 *Tech:* PostgreSQL, PL/pgSQL."]
+    C3["🗄️ *PostgreSQL Object:* Materialized Views → precomputed feature vectors."]
 
-    %% === PHASE 4 ===
-    D["
-    **4️⃣ Model Training & Persistence**  
-    🧭 *Purpose:* Train score prediction model and save the resulting artifact.  
-    ⚙️ *Logic:* Node.js training script queries Materialized Views, fits ML model (e.g., Poisson Regression / XGBoost), and serializes it.  
-    🧰 *Tech:* Node.js, TensorFlow.js / ML libraries.  
-    🗄️ *PostgreSQL:* Model_Metadata table – version, training date, performance.  
-    💾 *Artifact:* Serialized model stored in disk or table.
-    "] --> E
+    %% === MODEL TRAINING ===
+    D1(["🤖 **Model Training & Persistence**"])
+    D2["🧭 *Purpose:* Train and save score prediction model.  
+    ⚙️ *Logic:* Node.js script queries feature views, trains Poisson/XGBoost model, serializes artifact.  
+    🧰 *Tech:* Node.js, TensorFlow.js, ML libraries."]
+    D3["🗄️ *PostgreSQL Object:* Model_Metadata Table → version, date, metrics.  
+    💾 *Artifact:* Saved model file or DB blob."]
 
-    %% === PHASE 5 ===
-    E["
-    **5️⃣ Prediction Generation**  
-    🧭 *Purpose:* Apply trained model to predict future (score-null) games.  
-    ⚙️ *Logic:* Node.js script retrieves features for upcoming games from Materialized Views, loads model, and predicts outcomes.  
-    🧰 *Tech:* Node.js, Express.js, PostgreSQL.  
-    🗄️ *PostgreSQL:* Predictions Table – GameID, PredictedHomeScore, PredictedAwayScore, ConfidenceScore.
-    "] --> F
+    %% === PREDICTION GENERATION ===
+    E1(["📈 **Prediction Generation**"])
+    E2["🧭 *Purpose:* Apply trained model to predict scores for future games.  
+    ⚙️ *Logic:* Node.js script loads model, retrieves features, generates predictions.  
+    🧰 *Tech:* Node.js, Express.js, PostgreSQL."]
+    E3["🗄️ *PostgreSQL Object:* Predictions Table → GameID, Scores, Confidence."]
 
-    %% === PHASE 6 ===
-    F["
-    **6️⃣ Model Serving (API & Frontend)**  
-    🧭 *Purpose:* Serve predictions via REST API and visualize results on frontend.  
-    ⚙️ *Logic:* Express defines /api/v1/predictions/:gameId endpoint → React frontend consumes API → renders dashboard.  
-    🧰 *Tech:* Express.js (API), React.js (Frontend), JSON (Data Format).  
-    🗄️ *PostgreSQL:* Serves JSON data directly from Predictions Table.
-    "]
+    %% === MODEL SERVING ===
+    F1(["🌐 **Model Serving (API & Frontend)**"])
+    F2["🧭 *Purpose:* Expose predictions via REST API and visualize on frontend.  
+    ⚙️ *Logic:* Express.js defines /api/v1/predictions/:gameId → React consumes → Dashboard.  
+    🧰 *Tech:* Express.js (API), React.js (Frontend), JSON."]
+    F3["🗄️ *PostgreSQL Object:* API Response → JSON served from Predictions Table."]
+
+    %% === FLOW CONNECTIONS (CURVY) ===
+    A1-.->A2-->A3===>B1-.->B2-->B3===>C1-.->C2-->C3===>D1-.->D2-->D3===>E1-.->E2-->E3===>F1-.->F2-->F3
 
     %% === STYLING ===
-    classDef phase fill:#eef6ff,stroke:#0366d6,stroke-width:1.5px,color:#0d1117,font-size:13px;
-    class A,B,C,D,E,F phase;
+    classDef ingestion fill:#e6f0ff,stroke:#1b6ec2,stroke-width:2px,color:#0a1c2f,font-weight:bold;
+    classDef cleaning fill:#e8f8f0,stroke:#1b9e77,stroke-width:2px,color:#073b24,font-weight:bold;
+    classDef features fill:#fff6e6,stroke:#ffb347,stroke-width:2px,color:#5a3e00,font-weight:bold;
+    classDef training fill:#fde7eb,stroke:#c41e3a,stroke-width:2px,color:#4a0d14,font-weight:bold;
+    classDef prediction fill:#e8f6fa,stroke:#007f9f,stroke-width:2px,color:#003844,font-weight:bold;
+    classDef serving fill:#f4f4f6,stroke:#444c56,stroke-width:2px,color:#1b1f23,font-weight:bold;
+
+    class A1,A2,A3 ingestion;
+    class B1,B2,B3 cleaning;
+    class C1,C2,C3 features;
+    class D1,D2,D3 training;
+    class E1,E2,E3 prediction;
+    class F1,F2,F3 serving;
+
+    %% === TITLE ===
+    title "⚙️ Full Software Project Lifecycle — From Data Ingestion to Frontend Delivery"
