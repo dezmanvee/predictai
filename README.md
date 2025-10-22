@@ -1,3 +1,6 @@
+# Your Project Title
+
+## Architecture Overview
 ```mermaid
 %%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#FF6B6B','primaryTextColor':'#fff','primaryBorderColor':'#C92A2A','lineColor':'#495057','secondaryColor':'#4ECDC4','tertiaryColor':'#FFE66D','noteBkgColor':'#F8F9FA','noteTextColor':'#212529'}}}%%
 
@@ -57,3 +60,4 @@ graph LR
     classDef modelStyle fill:#bb8fce,stroke:#9b59b6,stroke-width:2px,color:#fff,font-style:italic
     classDef predDbStyle fill:#ec7063,stroke:#e74c3c,stroke-width:2px,color:#fff,font-style:italic
     classDef techLabel fill:none,stroke:none,color:#7f8c8d,font-size:10px
+```
