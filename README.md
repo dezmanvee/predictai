@@ -13,7 +13,7 @@ graph LR
     
     STAGE --> CLEAN[🧹 Data Storage<br/>& Cleaning]:::cleanStyle
     
-    CLEAN --> CORE[(Core Tables<br/>Leagues | Teams<br/>Games | Statistics)]:::coreDbStyle
+    CLEAN --> CORE[(Core Tables<br/>Leagues, Teams<br/>Games, Statistics)]:::coreDbStyle
     
     CORE --> FEATURE[⚙️ Feature<br/>Engineering]:::featureStyle
     
@@ -38,12 +38,12 @@ graph LR
     FRONTEND --> END([✨ END]):::endStyle
     
     %% Technology Labels
-    INGEST -.->|Node.js<br/>Axios<br/>Cron| TECH1[ ]:::techLabel
-    CLEAN -.->|Node.js<br/>PL/pgSQL| TECH2[ ]:::techLabel
-    FEATURE -.->|PostgreSQL<br/>Stored Procs| TECH3[ ]:::techLabel
-    TRAIN -.->|TensorFlow.js<br/>XGBoost| TECH4[ ]:::techLabel
-    PREDICT -.->|Node.js<br/>Express| TECH5[ ]:::techLabel
-    API -.->|Express<br/>JSON REST| TECH6[ ]:::techLabel
+    INGEST -.->|Node.js + Axios + Cron| TECH1[ ]:::techLabel
+    CLEAN -.->|Node.js + PL/pgSQL| TECH2[ ]:::techLabel
+    FEATURE -.->|PostgreSQL + Stored Procs| TECH3[ ]:::techLabel
+    TRAIN -.->|TensorFlow.js + XGBoost| TECH4[ ]:::techLabel
+    PREDICT -.->|Node.js + Express| TECH5[ ]:::techLabel
+    API -.->|Express + JSON REST| TECH6[ ]:::techLabel
     
     classDef startStyle fill:#e74c3c,stroke:#c0392b,stroke-width:3px,color:#fff,font-weight:bold,font-size:16px
     classDef endStyle fill:#27ae60,stroke:#229954,stroke-width:3px,color:#fff,font-weight:bold,font-size:16px
