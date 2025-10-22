@@ -1,4 +1,3 @@
-# PredictAI - Football Match Prediction Platform
 ```mermaid
 flowchart TD
     %% === DATA INGESTION PHASE ===
