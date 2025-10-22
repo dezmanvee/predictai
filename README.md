@@ -1,4 +1,5 @@
 # PredictAI - Football Match Prediction Platform
+```mermaid
 flowchart TD
     %% === DATA INGESTION PHASE ===
     A1(["🏗️ **Data Ingestion (Extraction & Caching)**"])
