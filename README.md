@@ -1,150 +1,62 @@
 # PredictAI - Football Match Prediction Platform
 
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+```mermaid
+flowchart TD
+    %% === PHASE 1 ===
+    A["
+    **1️⃣ Data Ingestion (Extraction & Caching)**  
+    🧭 *Purpose:* Efficiently fetch and temporarily store raw, time-sensitive data from rate-limited APIs.  
+    ⚙️ *Logic:* Scheduled Node.js service (cron job) calls APIs via Axios to fetch fixtures, results, and odds.  
+    🧰 *Tech:* Node.js, Express.js, Axios, pg (DB Connector).  
+    🗄️ *PostgreSQL:* Staging Tables – store raw, uncleaned API JSON rows, flushed after cleaning.
+    "] --> B
 
-## Overview
+    %% === PHASE 2 ===
+    B["
+    **2️⃣ Data Storage & Cleaning**  
+    🧭 *Purpose:* Transform raw API data into normalized relational form for analysis.  
+    ⚙️ *Logic:* Node.js script reads staging tables, standardizes data (team mapping), and upserts into normalized tables.  
+    🧰 *Tech:* Node.js, PL/pgSQL (validation & insertion).  
+    🗄️ *PostgreSQL:* Core Tables – Leagues, Teams, Games, Game_Statistics.
+    "] --> C
 
-PredictAI is an innovative football prediction platform powered by artificial intelligence. The platform enables users to view AI-generated match predictions, input their own predictions, and engage with interactive features like leaderboards and historical statistics.
+    %% === PHASE 3 ===
+    C["
+    **3️⃣ Feature Engineering**  
+    🧭 *Purpose:* Generate predictive variables (features) describing team form, strength, and context.  
+    ⚙️ *Logic:* Stored Procedures calculate rolling averages (e.g., ORtg, last 5 points, opponent strength) using joins & time windows.  
+    🧰 *Tech:* PostgreSQL, PL/pgSQL.  
+    🗄️ *PostgreSQL:* Materialized Views – store precomputed, flattened feature vectors.
+    "] --> D
 
-## Features
+    %% === PHASE 4 ===
+    D["
+    **4️⃣ Model Training & Persistence**  
+    🧭 *Purpose:* Train score prediction model and save the resulting artifact.  
+    ⚙️ *Logic:* Node.js training script queries Materialized Views, fits ML model (e.g., Poisson Regression / XGBoost), and serializes it.  
+    🧰 *Tech:* Node.js, TensorFlow.js / ML libraries.  
+    🗄️ *PostgreSQL:* Model_Metadata table – version, training date, performance.  
+    💾 *Artifact:* Serialized model stored in disk or table.
+    "] --> E
 
-### 🤖 AI Predictions
+    %% === PHASE 5 ===
+    E["
+    **5️⃣ Prediction Generation**  
+    🧭 *Purpose:* Apply trained model to predict future (score-null) games.  
+    ⚙️ *Logic:* Node.js script retrieves features for upcoming games from Materialized Views, loads model, and predicts outcomes.  
+    🧰 *Tech:* Node.js, Express.js, PostgreSQL.  
+    🗄️ *PostgreSQL:* Predictions Table – GameID, PredictedHomeScore, PredictedAwayScore, ConfidenceScore.
+    "] --> F
 
-- Match outcomes (win/lose/draw)
-- Exact scores and goal scorers
-- Team and player performance insights
+    %% === PHASE 6 ===
+    F["
+    **6️⃣ Model Serving (API & Frontend)**  
+    🧭 *Purpose:* Serve predictions via REST API and visualize results on frontend.  
+    ⚙️ *Logic:* Express defines /api/v1/predictions/:gameId endpoint → React frontend consumes API → renders dashboard.  
+    🧰 *Tech:* Express.js (API), React.js (Frontend), JSON (Data Format).  
+    🗄️ *PostgreSQL:* Serves JSON data directly from Predictions Table.
+    "]
 
-### 👥 User Features
-
-- User authentication and profiles
-- Interactive leaderboards and achievement badges
-- Personal prediction tracking and AI comparison
-
-### 📊 Analytics
-
-- Interactive match statistics charts
-- Historical performance tracking
-- Prediction accuracy visualization
-
-## Tech Stack
-
-### Frontend
-
-- **Framework:** React with Next.js
-- **Styling:** Tailwind CSS
-- **State Management:** Redux
-- **Data Visualization:** Chart.js
-
-### Backend
-
-- **Framework:** C# (.NET Framework)
-- **Database:** PostgreSQL
-- **API:** RESTful
-- **Caching:** Redis
-
-### AI/ML
-
-- **Core:** Python, TensorFlow
-- **Development:** Jupyter Notebook
-- **Deployment:** AWS SageMaker
-
-### DevOps
-
-- **Hosting:** AWS
-- **CI/CD:** GitHub Actions
-- **Containerization:** Docker
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js >= 18
-- Python >= 3.8
-- Docker
-- PostgreSQL
-
-### Installation
-
-1. Clone the repository
-
-```bash
-git clone https://github.com/yourusername/predictai.git
-cd predictai
-```
-
-2. Backend setup
-
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows: .\venv\Scripts\activate
-pip install -r requirements.txt
-cp .env.example .env  # Configure your environment variables
-```
-
-3. Frontend setup
-
-```bash
-cd frontend
-npm install
-cp .env.example .env.local  # Configure your environment variables
-```
-
-### Running the Application
-
-1. Start the backend server
-
-```bash
-cd backend
-python manage.py migrate
-python manage.py runserver
-```
-
-2. Start the frontend development server
-
-```bash
-cd frontend
-npm run dev
-```
-
-3. Access the application at `http://localhost:3000`
-
-## Project Structure
-
-```
-predictai/
-├── backend/              # Backend API server
-│   ├── api/             # API endpoints
-│   ├── models/          # Database models
-│   └── ml/              # Machine learning models
-├── frontend/            # Next.js frontend
-│   ├── components/      # Reusable components
-│   ├── pages/          # Application pages
-│   └── public/         # Static assets
-└── ml/                 # ML model training
-    ├── notebooks/      # Jupyter notebooks
-    └── scripts/        # Training scripts
-```
-
-## Contributing
-
-We welcome contributions! Please follow these steps:
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Football data provided by [Football-Data.org](https://www.football-data.org/)
-- Inspired by the football prediction community
-
----
-
-Built with ❤️ by the PredictAI Team
+    %% === STYLING ===
+    classDef phase fill:#eef6ff,stroke:#0366d6,stroke-width:1.5px,color:#0d1117,font-size:13px;
+    class A,B,C,D,E,F phase;
