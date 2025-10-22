@@ -11,7 +11,7 @@ flowchart TD
     B1(["🧹 **Data Storage & Cleaning**"])
     B2["🧭 *Purpose:* Normalize API data into relational format.  
     ⚙️ *Logic:* Node.js script standardizes data, performs upserts to normalized tables.  
-    🧰 *Tech:* Node.js, PL/pgSQL. "]
+    🧰 *Tech:* Node.js, PL/pgSQL."]
     B3["🗄️ *PostgreSQL Object:* Core Tables → Leagues, Teams, Games, Game_Statistics."]
 
     %% === FEATURE ENGINEERING ===
@@ -43,10 +43,10 @@ flowchart TD
     🧰 *Tech:* Express.js (API), React.js (Frontend), JSON."]
     F3["🗄️ *PostgreSQL Object:* API Response → JSON served from Predictions Table."]
 
-    %% === FLOW CONNECTIONS (CURVY) ===
+    %% === CURVY FLOW CONNECTIONS ===
     A1-.->A2-->A3===>B1-.->B2-->B3===>C1-.->C2-->C3===>D1-.->D2-->D3===>E1-.->E2-->E3===>F1-.->F2-->F3
 
-    %% === STYLING ===
+    %% === COLOR STYLING ===
     classDef ingestion fill:#e6f0ff,stroke:#1b6ec2,stroke-width:2px,color:#0a1c2f,font-weight:bold;
     classDef cleaning fill:#e8f8f0,stroke:#1b9e77,stroke-width:2px,color:#073b24,font-weight:bold;
     classDef features fill:#fff6e6,stroke:#ffb347,stroke-width:2px,color:#5a3e00,font-weight:bold;
@@ -60,6 +60,3 @@ flowchart TD
     class D1,D2,D3 training;
     class E1,E2,E3 prediction;
     class F1,F2,F3 serving;
-
-    %% === TITLE ===
-    title "⚙️ Full Software Project Lifecycle — From Data Ingestion to Frontend Delivery"
